@@ -1,9 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/admin.html.twig' %}
 
 {% block title "Recette: " ~ recipe.title %}
 
 {% block body %}
     <h1>{{ recipe.title }}</h1>
 
+    <img src="/reccetes/images/{{ recipe.thumbnail }}" alt="{{ recipe.title }}">
     {{ form(form) }}
 {% endblock %}
