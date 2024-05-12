@@ -11,11 +11,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/recipe', name: 'admin.recipe.')]
 class RecipeController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
+    #[IsGranted('')]
     public function index(RecipeRepository $repository, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
