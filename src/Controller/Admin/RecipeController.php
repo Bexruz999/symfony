@@ -18,6 +18,7 @@ class RecipeController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(RecipeRepository $repository, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $recipes = $repository->findWithDurationLowerThan(15);
         //$recipe = new Recipe();
         /*$recipe->setTitle('Reseaux')
@@ -56,10 +57,10 @@ class RecipeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $file = $form->get('thumbnailFile')->getData();
+            /*$file = $form->get('thumbnailFile')->getData();
             $fileName = $recipe->getId() . '.' . $file->getClientOriginalExtension();
             $file->move($this->getParameter('kernel.project_dir') . '/public/reccetes/images', $fileName);
-            $recipe->setThumbnail($fileName);
+            $recipe->setThumbnail($fileName);*/
             $em->flush();
             $this->addFlash('success', 'Recipe updated.');
             return $this->redirectToRoute('admin.recipe.index');

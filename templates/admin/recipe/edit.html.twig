@@ -5,6 +5,7 @@
 {% block body %}
     <h1>{{ recipe.title }}</h1>
 
-    <img src="/reccetes/images/{{ recipe.thumbnail }}" alt="{{ recipe.title }}">
+    <img src="{{ vich_uploader_asset(recipe, 'thumbnailFile') }}" alt="{{ recipe.title }}">
+
     {{ form(form) }}
 {% endblock %}

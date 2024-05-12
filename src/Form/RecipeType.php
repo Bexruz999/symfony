@@ -26,12 +26,7 @@ class RecipeType extends AbstractType
         $builder
             ->add('title', TextType::class, ['empty_data' => '',])
             ->add('slug', TextType::class, ['required' => false,])
-            ->add('thumbnailFile', FileType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new Image()
-                ]
-            ])
+            ->add('thumbnailFile', FileType::class)
             ->add('content', TextType::class, ['empty_data' => '',])
             ->add('duration')
             ->add('category', EntityType::class, [
