@@ -82,6 +82,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $roles[] = 'ROLE_ADMIN';
         }
 
+        if ($this->isVerified){
+            $roles[] = 'ROLE_VERIFIED';
+        }
+
         return array_unique($roles);
     }
 
