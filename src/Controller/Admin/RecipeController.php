@@ -18,10 +18,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class RecipeController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(RecipeRepository $repository, EntityManagerInterface $em): Response
+    public function index(RecipeRepository $repository, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        $recipes = $repository->findWithDurationLowerThan(15);
+        $page = $request->query->getInt('page', 1);
+        $recipes = $repository->paginateRecipes($page);
+
         //$recipe = new Recipe();
         /*$recipe->setTitle('Reseaux')
             ->setSlug('slug')
@@ -32,9 +33,7 @@ class RecipeController extends AbstractController
         $em->persist($recipe);
         $em->flush();*/
 
-        return $this->render('admin/recipe/index.html.twig', [
-            'recipes' => $recipes,
-        ]);
+        return $this->render('admin/recipe/index.html.twig', ['recipes' => $recipes,]);
     }
 
     #[Route('/{slug}/{id}', name: 'show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]

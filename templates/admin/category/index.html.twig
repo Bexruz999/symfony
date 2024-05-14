@@ -30,6 +30,7 @@
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Reccetes</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -38,6 +39,9 @@
                 <tr>
                     <td>
                         <a href="{{ path('admin.category.show', {id: category.id}) }}">{{ category.name }}</a>
+                    </td>
+                    <td>
+                        <p>{{ category.count }}</p>
                     </td>
                     <td>
                         <div class="d-flex gap-1">
