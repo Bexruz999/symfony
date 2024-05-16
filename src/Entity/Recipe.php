@@ -3,14 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\RecipeRepository;
-use App\Validator\BanWord;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\Length;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
@@ -26,16 +24,16 @@ class Recipe
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('recipes.index')]
+    #[Groups(['recipes.index', 'recipes.create', 'recipes.edit'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 5)]
-    #[Groups('recipes.index')]
+    #[Groups(['recipes.index', 'recipes.create', 'recipes.edit'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups('recipes.show')]
+    #[Groups(['recipes.show', 'recipes.create', 'recipes.update'])]
     private ?string $content = null;
 
     #[ORM\Column]
@@ -47,14 +45,15 @@ class Recipe
     #[ORM\Column]
     #[Assert\Positive()]
     #[Assert\LessThan(value: 1440)]
-    #[Groups('recipes.index')]
+    #[Groups(['recipes.index', 'recipes.create', 'recipes.update'])]
     private ?int $duration = null;
 
-    #[ORM\Column]
-    #[Groups('recipes.show')]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['recipes.show', 'recipes.create', 'recipes.update'])]
     private ?int $category_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipes', cascade: ['persist'])]
+    #[Groups(['recipes.show', 'recipes.create', 'recipes.update'])]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
