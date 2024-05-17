@@ -7,8 +7,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AppFixtures extends Fixture
+class UserFixtures extends Fixture
 {
+    public const ADMIN = 'ADMIN_USER';
+
     public function __construct(private readonly UserPasswordHasherInterface $hasher)
     {
     }
@@ -23,6 +25,7 @@ class AppFixtures extends Fixture
             ->setPassword($this->hasher->hashPassword($user, 'admin'))
             ->setVerified(true)
             ->setApiToken('api_token');
+        $this->addReference(self::ADMIN, $user);
         $manager->persist($user);
 
         for ($i = 1; $i < 10; $i++) {
@@ -33,6 +36,7 @@ class AppFixtures extends Fixture
                 ->setPassword($this->hasher->hashPassword($user, '0000'))
                 ->setVerified(true)
                 ->setApiToken("api_token$i");
+            $this->addReference("user$i", $user);
             $manager->persist($user);
         }
 

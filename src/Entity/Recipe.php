@@ -30,7 +30,7 @@ class Recipe
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 5)]
     #[Groups(['recipes.index', 'recipes.create', 'recipes.edit'])]
-    private ?string $slug = null;
+    private ?string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['recipes.show', 'recipes.create', 'recipes.update'])]
@@ -63,6 +63,9 @@ class Recipe
     #[Vich\UploadableField(mapping: 'recipes', fileNameProperty: 'thumbnail')]
     #[Assert\Image()]
     private ?File $thumbnailFile = null;
+
+    #[ORM\ManyToOne(inversedBy: 'recipes')]
+    private ?User $user = null;
 
     public function getThumbnailFile(): ?File
     {
@@ -185,6 +188,18 @@ class Recipe
     public function setThumbnail(?string $thumbnail): static
     {
         $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
