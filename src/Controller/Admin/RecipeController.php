@@ -5,8 +5,10 @@ namespace App\Controller\Admin;
 use App\Entity\Recipe;
 use App\Form\RecipeType;
 use App\Repository\RecipeRepository;
+use App\Security\Voter\RecipeVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,10 +20,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class RecipeController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(RecipeRepository $repository, Request $request): Response
+    #[IsGranted(RecipeVoter::LIST)]
+    public function index(RecipeRepository $repository, Request $request, Security $security): Response
     {
         $page = $request->query->getInt('page', 1);
-        $recipes = $repository->paginateRecipes($page);
+        $userId = $security->getUser()->getId();
+        $cantListAll = $security->isGranted(RecipeVoter::LIST_ALL);
+        $recipes = $repository->paginateRecipes($page, $cantListAll ? null : $userId);
 
         //$recipe = new Recipe();
         /*$recipe->setTitle('Reseaux')
@@ -50,6 +55,7 @@ class RecipeController extends AbstractController
         ]);
     }
 
+    #[IsGranted(RecipeVoter::EDIT, subject: 'recipe')]
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => Requirement::DIGITS])]
     public function edit(Request $request, Recipe $recipe, EntityManagerInterface $em): Response
     {
@@ -74,6 +80,7 @@ class RecipeController extends AbstractController
     }
 
     #[Route('/admin/create', name: 'create', methods: ['GET', 'POST'])]
+    #[IsGranted(RecipeVoter::CREATE)]
     public function create(Request $request, EntityManagerInterface $em): Response
     {
         $recipe = new Recipe();
