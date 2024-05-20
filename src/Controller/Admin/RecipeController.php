@@ -113,5 +113,4 @@ class RecipeController extends AbstractController
         $this->addFlash('success', 'Recipe deleted.');
         return $this->redirectToRoute('admin.recipe.index');
     }
-    //test
 }
