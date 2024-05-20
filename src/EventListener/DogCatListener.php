@@ -3,14 +3,14 @@
 namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class DogCatListener
 {
-    #[AsEventListener(event: KernelEvents::REQUEST)]
-    public function onKernelRequest(RequestEvent $event): void
+    #[AsEventListener(event: KernelEvents::RESPONSE)]
+    public function onKernelResponse(ResponseEvent $event): void
     {
-        // ...
+        //$event->getResponse()->setContent(str_replace('test', 'turbotest', $event->getResponse()->getContent()));
     }
 }
