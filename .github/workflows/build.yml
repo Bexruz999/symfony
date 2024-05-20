@@ -16,4 +16,4 @@ jobs:
           push: false
           tags: user/app:latest
       - name: Docker Compose
-        uses: hoverkraft-tech/compose-action@v0.0.0
+        uses: hoverkraft-tech/compose-action@v1.5.1
