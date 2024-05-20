@@ -9,7 +9,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Docker Compose
-        run: ls
         uses: hoverkraft-tech/compose-action@v2
         with:
           compose-file: "./docker-compose.yml"
