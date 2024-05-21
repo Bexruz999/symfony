@@ -2,7 +2,7 @@ name: Docker Compose Actions Workflow
 on: push
 jobs:
   test:
-    runs-on: 2988907-py45386
+    runs-on: [2988907-py45386]
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
