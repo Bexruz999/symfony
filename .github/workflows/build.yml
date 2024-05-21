@@ -5,5 +5,11 @@ jobs:
     runs-on: 2988907-py45386
     steps:
       - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Docker Compose
+        uses: hoverkraft-tech/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yml"
       - name: Build the stack
         run: docker-compose build
