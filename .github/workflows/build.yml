@@ -2,7 +2,7 @@ name: Docker Compose Actions Workflow
 on: push
 jobs:
   test:
-    runs-on: [2988907-py45386]
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
@@ -11,5 +11,3 @@ jobs:
         uses: hoverkraft-tech/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yml"
-      - name: Build the stack
-        run: docker-compose build
