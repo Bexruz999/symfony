@@ -8,6 +8,8 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      - name: compose down
+        run: docker-compose down
       - name: checkout repo
         uses: actions/checkout@v4
       - name: docker-compose
