@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RecipeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -10,6 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Gedmo\Mapping\Annotation\Translatable;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 #[UniqueEntity('title')]
@@ -25,6 +28,7 @@ class Recipe
 
     #[ORM\Column(length: 255)]
     #[Groups(['recipes.index', 'recipes.create', 'recipes.edit'])]
+    #[Translatable]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -67,6 +71,18 @@ class Recipe
     #[ORM\ManyToOne(inversedBy: 'recipes')]
     private ?User $user = null;
 
+    /**
+     * @var Collection<int, Quantity>
+     */
+    #[ORM\OneToMany(targetEntity: Quantity::class, mappedBy: 'recipe', orphanRemoval: true, cascade: ['persist'])]
+    #[Assert\Valid]
+    private Collection $quantities;
+
+    public function __construct()
+    {
+        $this->quantities = new ArrayCollection();
+    }
+
     public function getThumbnailFile(): ?File
     {
         return $this->thumbnailFile;
@@ -86,7 +102,7 @@ class Recipe
 
     public function getTitle(): ?string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     public function setTitle(string $title): static
@@ -200,6 +216,36 @@ class Recipe
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quantity>
+     */
+    public function getQuantities(): Collection
+    {
+        return $this->quantities;
+    }
+
+    public function addQuantity(Quantity $quantity): static
+    {
+        if (!$this->quantities->contains($quantity)) {
+            $this->quantities->add($quantity);
+            $quantity->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuantity(Quantity $quantity): static
+    {
+        if ($this->quantities->removeElement($quantity)) {
+            // set the owning side to null (unless already changed)
+            if ($quantity->getRecipe() === $this) {
+                $quantity->setRecipe(null);
+            }
+        }
 
         return $this;
     }

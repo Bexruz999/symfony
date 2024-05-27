@@ -1,4 +1,7 @@
 controllers:
+    prefix: '{_locale}'
+    requirements:
+        locale: en|ru|uz
     resource:
         path: ../src/Controller/
         namespace: App\Controller

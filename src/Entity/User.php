@@ -51,9 +51,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Recipe::class, mappedBy: 'user')]
     private Collection $recipes;
 
+    #[ORM\Column(length: 255, options: ['default' => 'ru'])]
+    private ?string $locale = 'ru';
+
+    /**
+     * @var Collection<int, UserCollection>
+     */
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: UserCollection::class, orphanRemoval: true)]
+    private Collection $userCollections;
+
+    /**
+     * @var Collection<int, Item>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Item::class, orphanRemoval: true)]
+    private Collection $items;
+
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
+        $this->userCollections = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -199,6 +216,78 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($recipe->getUser() === $this) {
                 $recipe->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): static
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCollection>
+     */
+    public function getUserCollections(): Collection
+    {
+        return $this->userCollections;
+    }
+
+    public function addUserCollection(UserCollection $userCollection): static
+    {
+        if (!$this->userCollections->contains($userCollection)) {
+            $this->userCollections->add($userCollection);
+            $userCollection->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCollection(UserCollection $userCollection): static
+    {
+        if ($this->userCollections->removeElement($userCollection)) {
+            // set the owning side to null (unless already changed)
+            if ($userCollection->getUserId() === $this) {
+                $userCollection->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Item>
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function addItem(Item $item): static
+    {
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeItem(Item $item): static
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getUser() === $this) {
+                $item->setUser(null);
             }
         }
 

@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Recipe;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,11 +30,17 @@ class RecipeType extends AbstractType
             ->add('thumbnailFile', FileType::class)
             ->add('content', TextType::class, ['empty_data' => '',])
             ->add('duration')
-            ->add('category', EntityType::class, [
-                'class' => Category::class,
-                'choice_label' => 'name',
-                'expanded' => true,
+            ->add('quantities', CollectionType::class, options: [
+                'entry_type' => QuantityType::class,
+                'by_reference' => false,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'attr' => [
+                    'data-controller' => 'form-collection'
+                ]
             ])
+            ->add('category', CategoryAutocompleteField::class)
             ->add('save', SubmitType::class, ['label' => 'Save',])
             ->addEventListener(FormEvents::PRE_SUBMIT, $this->factory->autoSlug('title'))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->factory->timestamps());

@@ -19,9 +19,11 @@ class ContactType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'empty_data' => '',
+                'label' => 'contactForm.name',
             ])
             ->add('email', EmailType::class, [
                 'empty_data' => '',
+                'label' => 'contactForm.email',
             ])
             ->add('service', ChoiceType::class, [
                 'choices'  => [
@@ -29,11 +31,13 @@ class ContactType extends AbstractType
                     'support' => 'support@demo.fr',
                     'marketing' => 'marketing@demo.fr',
                 ],
+                'label' => 'contactForm.service',
             ])
             ->add('message', TextareaType::class, [
                 'empty_data' => '',
+                'label' => 'contactForm.message',
             ])->add('submit', SubmitType::class, [
-                'label' => 'Envoyer'
+                'label' => 'contactForm.send',
             ]);
     }
 
