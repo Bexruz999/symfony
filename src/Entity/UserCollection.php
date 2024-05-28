@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserCollectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserCollectionRepository::class)]
@@ -19,7 +20,8 @@ class UserCollection
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    #[Assert\Length(min: 5)]
+    private ?string $slug = '';
 
     #[ORM\ManyToOne(inversedBy: 'userCollections')]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,6 +38,13 @@ class UserCollection
      */
     #[ORM\OneToMany(mappedBy: 'UserCollection', targetEntity: Item::class, orphanRemoval: true)]
     private Collection $items;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userCollections')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
 
     public function __construct()
     {
@@ -76,9 +85,14 @@ class UserCollection
         return $this->user_id;
     }
 
-    public function setUserId(?User $user_id): static
+    public function getUser(): ?User
     {
-        $this->user_id = $user_id;
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
@@ -133,6 +147,30 @@ class UserCollection
                 $item->setUserCollection(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

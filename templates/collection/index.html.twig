@@ -7,33 +7,37 @@
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis debitis dolores enim eveniet expedita, fuga
         inventore ipsa mollitia, necessitatibus nostrum odio repudiandae sunt tempore voluptas?</p>
 
-    <a class="btn btn-success" href="{{ path('admin.item.create')}}">{{ 'NewCollection' | trans }}</a>
+    <a class="btn btn-success" href="{{ path('admin.collection.create')}}">{{ 'NewCollection' | trans }}</a>
 
     <table class="table">
         <thead>
         <tr>
-            <th>{{ knp_pagination_sortable(items, 'ID', 'c.id') }}</th>
-            <th>{{ knp_pagination_sortable(items, 'Name', 'c.name') }}</th>
+            <th>{{ knp_pagination_sortable(collections, 'ID', 'c.id') }}</th>
+            <th>{{ knp_pagination_sortable(collections, 'Name', 'c.name') }}</th>
             <th>Category</th>
+            <th>Count</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        {% for item in items %}
-            <tr id="row_recipe_{{ item.id }}">
+        {% for collection in collections %}
+            <tr id="row_recipe_{{ collection.id }}">
                 <td>
-                    {{ item.id }}
+                    {{ collection.id }}
                 </td>
                 <td>
-                    <a href="{{ path('admin.item.show', {id: item.id}) }}">{{ item.name }}</a>
+                    <a href="{{ path('admin.collection.show', {id: collection.id, slug: collection.slug}) }}">{{ collection.name }}</a>
                 </td>
                 <td>
-                    <p>{{ item.usercollection.name | default('') }}</p>
+                    <p>{{ collection.category.name | default('') }}</p>
+                </td>
+                <td>
+                    <p>{{ items.0.count | default(0) }}</p>
                 </td>
                 <td>
                     <div class="d-flex gap-1">
-                        <a class="btn btn-primary btn-sm" href="{{ path('admin.item.edit', {id: item.id}) }}">Edit</a>
-                        <form action="{{  path('admin.item.delete', { id: item.id }) }}" method="post">
+                        <a class="btn btn-primary btn-sm" href="{{ path('admin.collection.edit', {id: collection.id}) }}">Edit</a>
+                        <form action="{{  path('admin.collection.delete', { id: collection.id }) }}" method="post">
                             <input type="hidden" name="_method" value="DELETE">
                             <button class="btn btn-danger btn-sm">Delete</button>
                         </form>
@@ -45,7 +49,7 @@
 
     </table>
 
-    {{ knp_pagination_render(items) }}
+    {{ knp_pagination_render(collections) }}
 
     {#<div class="d-flex">
         {% if page > 1 %}

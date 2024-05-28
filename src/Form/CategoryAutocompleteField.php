@@ -16,7 +16,7 @@ class CategoryAutocompleteField extends AbstractType
     {
         $resolver->setDefaults([
             'class' => Category::class,
-            'placeholder' => 'Choose a Category',
+            'placeholder' => 'Choose',
             'choice_label' => 'name',
             'query_builder' => function (CategoryRepository $repository) {
             return $repository->createQueryBuilder('category');

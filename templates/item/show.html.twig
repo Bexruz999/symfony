@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title item.name %}
+
+{% block body %}
+    <h1>{{ item.name }}</h1>
+
+    <p>{{ item.content | nl2br }}</p>
+{% endblock %}

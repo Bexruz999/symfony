@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title item.name %}
+
+{% block body %}
+    <h1>{{ item.name }}</h1>
+
+    {#<img src="{{ vich_uploader_asset(recipe, 'thumbnailFile') }}" alt="{{ recipe.title }}">#}
+
+    {{ form(form, {action: path('admin.item.edit', {id: item.id}) }) }}
+
+{% endblock %}
+

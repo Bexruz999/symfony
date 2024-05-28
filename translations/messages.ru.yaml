@@ -1,6 +1,10 @@
-Name: Имя
-contactForm:
-  name: Имя
-  email: Почта
-  service: Сервис
-  message: Собшения
+Name: Название
+Email: Почта
+Service: Сервис
+Message: Собшения
+Content: Контент
+Description: Описание
+Category: Категория
+Save: Сохранить
+Choose: Выберите Категорию
+NewCollection: Новое Коллекция

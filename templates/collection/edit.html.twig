@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title collection.name %}
+
+{% block body %}
+    <h1>{{ collection.name }}</h1>
+
+    {{ form(form, {action: path('admin.collection.edit', {id: collection.id, slug: collection.slug}) }) }}
+{% endblock %}

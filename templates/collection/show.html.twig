@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title collection.name %}
+
+{% block body %}
+    <h1>{{ collection.name }}</h1>
+
+    <p>{{ 'Description' | trans }}:</p>
+    <p>{{ collection.description | nl2br }}</p>
+    <p>{{ 'Category' | trans }}:</p>
+    <p>{{ collection.category.name | nl2br }}</p>
+{% endblock %}

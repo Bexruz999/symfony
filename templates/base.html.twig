@@ -24,14 +24,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ app.current_route == 'home' ? 'active' : '' }}" aria-current="page" href="{{ path('admin.recipe.index') }}">Adminstration</a>
+                        <a class="nav-link {{ app.current_route == 'home' ? 'active' : '' }}" aria-current="page" href="{{ path('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ app.current_route starts with 'admin.recipe.' ? 'active' : '' }}" href="{{ path('admin.recipe.index') }}">Recepies</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link {{ app.current_route starts with 'admin.category.' ? 'active' : '' }}" href="{{ path('admin.category.index') }}">Category</a>
+                        <a class="nav-link {{ app.current_route starts with 'admin.collection' ? 'active' : '' }}" href="{{ path('admin.collection.index') }}">MyCollection</a>
                     </li>
+
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.current_route starts with 'admin.category.' ? 'active' : '' }}" href="{{ path('admin.category.index') }}">Category</a>
+                        </li>
+
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link {{ app.current_route starts with 'contact' ? 'active' : '' }}" href="{{ path('contact') }}">Contact</a>
                     </li>

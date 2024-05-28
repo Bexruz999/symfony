@@ -24,7 +24,7 @@ class CategoryRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->select('NEW App\\DTO\\CategoryWithCountDTO(c.id, c.name, Count(r.id))')
-            ->leftJoin('c.recipes', 'r')
+            ->leftJoin('c.userCollections', 'r')
             ->groupBy('c.id')
             ->getQuery()
             ->getResult();

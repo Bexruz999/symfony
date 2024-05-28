@@ -5,15 +5,54 @@ namespace App\Repository;
 use App\Entity\UserCollection;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<UserCollection>
  */
 class UserCollectionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private PaginatorInterface $paginator)
     {
         parent::__construct($registry, UserCollection::class);
+    }
+
+    public function paginateCollections(int $page): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('r')->leftJoin('r.category', 'c')->select('r', 'c');
+        /*if ($userId) {
+            $builder = $builder->andWhere('r.user = :user')
+                ->setParameter(':user', $userId);
+        }*/
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            20,
+            [
+                'distinct' => false,
+                'sortFieldAllowlist' => ['r.id', 'r.title']
+            ]
+        );
+
+
+        /*return new Paginator(
+            $this->createQueryBuilder('r')
+                ->setFirstResult(($page -1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->setHint(Paginator::HINT_ENABLE_DISTINCT, false), false
+        );*/
+    }
+
+    public function findAllWithCount(): array
+    {
+        return $this->createQueryBuilder('cl')
+            ->select('NEW App\\DTO\\UserCollectionWithCountDTO(cl.id, cl.name, Count(i.id))')
+            ->leftJoin('cl.items', 'i')
+            ->groupBy('cl.id')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

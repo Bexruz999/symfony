@@ -37,9 +37,16 @@ class Category
     #[Groups('recipes.create')]
     private Collection $recipes;
 
+    /**
+     * @var Collection<int, UserCollection>
+     */
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: UserCollection::class)]
+    private Collection $userCollections;
+
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
+        $this->userCollections = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,6 +126,36 @@ class Category
             // set the owning side to null (unless already changed)
             if ($recipe->getCategory() === $this) {
                 $recipe->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCollection>
+     */
+    public function getUserCollections(): Collection
+    {
+        return $this->userCollections;
+    }
+
+    public function addUserCollection(UserCollection $userCollection): static
+    {
+        if (!$this->userCollections->contains($userCollection)) {
+            $this->userCollections->add($userCollection);
+            $userCollection->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCollection(UserCollection $userCollection): static
+    {
+        if ($this->userCollections->removeElement($userCollection)) {
+            // set the owning side to null (unless already changed)
+            if ($userCollection->getCategory() === $this) {
+                $userCollection->setCategory(null);
             }
         }
 

@@ -1,2 +1,11 @@
 vich_uploader.form_label.delete_confirm: 'Delete?'
 vich_uploader.link.download: Download
+Name: Name
+Email: Email
+Service: Service
+Message: Message
+Content: Content
+Description: Description
+Category: Category
+Save: Save
+Choose: Choose a Category
