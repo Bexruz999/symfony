@@ -63,7 +63,6 @@ class RecipeVoter extends Voter
             case self::LIST:
             case self::VIEW:
                 return true;
-                break;
         }
 
         return false;

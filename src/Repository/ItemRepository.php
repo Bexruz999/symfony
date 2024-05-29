@@ -18,23 +18,23 @@ class ItemRepository extends ServiceEntityRepository
         parent::__construct($registry, Item::class);
     }
 
-    public function paginateItems(int $page): PaginationInterface
+    public function paginateItems(int $page, ?int $userId): PaginationInterface
     {
-        $builder = $this->createQueryBuilder('r')->leftJoin('r.UserCollection', 'c')->select('r', 'c');
-        /*if ($userId) {
+        $builder = $this->createQueryBuilder('r')
+            ->leftJoin('r.UserCollection', 'c')
+            ->select('r', 'c');
+
+        if ($userId) {
             $builder = $builder->andWhere('r.user = :user')
                 ->setParameter(':user', $userId);
-        }*/
+        }
+
         return $this->paginator->paginate(
             $builder,
             $page,
             20,
-            [
-                'distinct' => false,
-                'sortFieldAllowlist' => ['r.id', 'r.name']
-            ]
+            ['distinct' => false, 'sortFieldAllowlist' => ['r.id', 'r.name']]
         );
-
 
         /*return new Paginator(
             $this->createQueryBuilder('r')
@@ -43,6 +43,22 @@ class ItemRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->setHint(Paginator::HINT_ENABLE_DISTINCT, false), false
         );*/
+    }
+
+    public function paginateCollectionItems(int $page, ?int $collectionId): PaginationInterface
+    {
+        $builder = $this->createQueryBuilder('r')
+            ->leftJoin('r.UserCollection', 'c')
+            ->select('r', 'c')
+            ->andWhere('r.UserCollection = :cl')
+            ->setParameter(':cl', $collectionId);
+
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            20,
+            ['distinct' => false, 'sortFieldAllowlist' => ['r.id', 'r.name']]
+        );
     }
 
     //    /**

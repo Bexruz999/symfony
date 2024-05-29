@@ -18,20 +18,22 @@ class UserCollectionRepository extends ServiceEntityRepository
         parent::__construct($registry, UserCollection::class);
     }
 
-    public function paginateCollections(int $page): PaginationInterface
+    public function paginateCollections(int $page, ?int $userId): PaginationInterface
     {
         $builder = $this->createQueryBuilder('r')->leftJoin('r.category', 'c')->select('r', 'c');
-        /*if ($userId) {
+
+        if ($userId) {
             $builder = $builder->andWhere('r.user = :user')
                 ->setParameter(':user', $userId);
-        }*/
+        }
+
         return $this->paginator->paginate(
             $builder,
             $page,
             20,
             [
                 'distinct' => false,
-                'sortFieldAllowlist' => ['r.id', 'r.title']
+                'sortFieldAllowlist' => ['r.id', 'r.name']
             ]
         );
 
@@ -53,6 +55,17 @@ class UserCollectionRepository extends ServiceEntityRepository
             ->groupBy('cl.id')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findWithItems($id)
+    {
+        return $this->createQueryBuilder('cl')
+            ->select('cl', 'i')
+            ->Where('cl.id = :id')
+            ->setParameter('id', $id)
+            ->leftJoin('cl.items', 'i')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     //    /**

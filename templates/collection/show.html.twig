@@ -5,8 +5,42 @@
 {% block body %}
     <h1>{{ collection.name }}</h1>
 
-    <p>{{ 'Description' | trans }}:</p>
+    <br>
+    <br>
+    <h3>{{ 'Description' | trans }}:</h3>
     <p>{{ collection.description | nl2br }}</p>
-    <p>{{ 'Category' | trans }}:</p>
+    <h3>{{ 'Category' | trans }}:</h3>
     <p>{{ collection.category.name | nl2br }}</p>
+    <h3>{{ 'Items' | trans }}:</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>{{ 'Name' | trans }}</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr id="row_recipe_{{ item.id }}">
+                <td>
+                    <a href="{{ path('admin.item.show', {id: item.id}) }}">{{ item.name }}</a>
+                </td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a class="btn btn-primary btn-sm" href="{{ path('admin.item.edit', {id: item.id}) }}">Edit</a>
+                        <form action="{{  path('admin.item.delete', { id: item.id }) }}" method="post">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+    <input type="text" name="tags" value="pfTag1,pfTag2,pfTag3" data-role="tagsinput" />
+    {{ knp_pagination_render(items) }}
+
+    <a class="btn btn-success" href="{{ path('admin.item.add', {id: collection.id})}}">{{ 'New' | trans }}</a>
 {% endblock %}

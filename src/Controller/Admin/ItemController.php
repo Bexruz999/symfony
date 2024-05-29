@@ -5,22 +5,33 @@ namespace App\Controller\Admin;
 use App\Entity\Item;
 use App\Form\ItemType;
 use App\Repository\ItemRepository;
+use App\Repository\UserCollectionRepository;
+use App\Security\Voter\ItemVoter;
+use App\Security\Voter\UserCollectionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/item', name: 'admin.item.')]
 class ItemController extends AbstractController
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, ItemRepository $repository): Response
+    #[IsGranted(ItemVoter::LIST)]
+    public function index(Request $request, ItemRepository $repository, Security $security): Response
     {
         $page = $request->query->getInt('page', 1);
-        $items = $repository->paginateItems($page);
-
+        $userId = $security->getUser()->getId();
+        $cantListAll = $security->isGranted(UserCollectionVoter::LIST_ALL);
+        $items = $repository->paginateItems($page,$cantListAll ? null : $userId);
         return $this->render('item/index.html.twig', [
             'items' => $items,
         ]);
@@ -35,6 +46,7 @@ class ItemController extends AbstractController
             'item' => $item,
         ]);
     }
+
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request,Item $item, EntityManagerInterface $entityManager): Response
     {
@@ -70,6 +82,31 @@ class ItemController extends AbstractController
         }
 
         return $this->render('item/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+
+    }
+
+    #[Route('/{id}/add', name: 'add', methods: ['GET', 'POST'])]
+    public function add($id, Request $request, EntityManagerInterface $entityManager, Security $security, UserCollectionRepository $collectionRepository): Response
+    {
+        $collection = $collectionRepository->find($id);
+        $item = new Item();
+        $form = $this->createForm(ItemType::class, $item);
+        $form->remove('UserCollection');
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $item->setUserCollection($collection);
+            $item->setUser($security->getUser());
+            $entityManager->persist($item);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Item created successfully.');
+            return $this->redirectToRoute('admin.collection.show', ['id' => $id, 'slug' => $collection->getSlug()]);
+        }
+
+        return $this->render('item/add.html.twig', [
             'form' => $form->createView(),
         ]);
 

@@ -26,9 +26,9 @@
                     <li class="nav-item">
                         <a class="nav-link {{ app.current_route == 'home' ? 'active' : '' }}" aria-current="page" href="{{ path('home') }}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    {#<li class="nav-item">
                         <a class="nav-link {{ app.current_route starts with 'admin.recipe.' ? 'active' : '' }}" href="{{ path('admin.recipe.index') }}">Recepies</a>
-                    </li>
+                    </li>#}
 
                     <li class="nav-item">
                         <a class="nav-link {{ app.current_route starts with 'admin.collection' ? 'active' : '' }}" href="{{ path('admin.collection.index') }}">MyCollection</a>

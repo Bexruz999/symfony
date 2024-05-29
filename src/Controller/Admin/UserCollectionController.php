@@ -4,23 +4,30 @@ namespace App\Controller\Admin;
 
 use App\Entity\UserCollection;
 use App\Form\UserCollectionType;
+use App\Repository\ItemRepository;
 use App\Repository\UserCollectionRepository;
+use App\Security\Voter\UserCollectionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/collection', name: 'admin.collection.')]
 class UserCollectionController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(UserCollectionRepository $repository, Request $request): Response
+    #[IsGranted(UserCollectionVoter::LIST)]
+    public function index(UserCollectionRepository $repository, Request $request, Security $security): Response
     {
 
         $page = $request->query->getInt('page', 1);
-        $collections = $repository->paginateCollections($page);
+        $userId = $security->getUser()->getId();
+        $cantListAll = $security->isGranted(UserCollectionVoter::LIST_ALL);
+        $collections = $repository->paginateCollections($page, $cantListAll ? null : $userId);
 
         return $this->render('collection/index.html.twig', [
             'collections' => $collections,
@@ -29,16 +36,17 @@ class UserCollectionController extends AbstractController
     }
 
     #[Route('/{slug}/{id}', name: 'show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
-    public function show(Request $request, string $slug, int $id, UserCollectionRepository $repository): Response
+    public function show(Request $request, string $slug, int $id, UserCollectionRepository $repository, ItemRepository $itemRepository): Response
     {
-
+        $page = $request->query->getInt('page', 1);
         $collection = $repository->find($id);
+        $items = $itemRepository->paginateCollectionItems($page, $id);
         if ($collection->getSlug() !== $slug) {
-            return $this->redirectToRoute('admin.collection.show', ['slug' => $collection->getSlug(), 'id' => $recipe->getId()]);
+            return $this->redirectToRoute('admin.collection.show', ['slug' => $collection->getSlug(), 'id' => $collection->getId()]);
         }
-
         return $this->render('collection/show.html.twig', [
             'collection' => $collection,
+            'items' => $items
         ]);
     }
 
