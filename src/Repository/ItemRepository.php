@@ -20,9 +20,35 @@ class ItemRepository extends ServiceEntityRepository
 
     public function paginateItems(int $page, ?int $userId): PaginationInterface
     {
-        $builder = $this->createQueryBuilder('r')
-            ->leftJoin('r.UserCollection', 'c')
-            ->select('r', 'c');
+        $builder = $this->latestQuery();
+
+        if ($userId) {
+            $builder = $builder->andWhere('r.user = :user')
+                ->setParameter(':user', $userId);
+        }
+
+        return $this->paginator->paginate(
+            $builder,
+            $page,
+            20,
+            ['distinct' => false, 'sortFieldAllowlist' => ['r.id', 'r.name']]
+        );
+
+        /*return new Paginator(
+            $this->createQueryBuilder('r')
+                ->setFirstResult(($page -1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->setHint(Paginator::HINT_ENABLE_DISTINCT, false), false
+        );*/
+    }
+
+    public function paginateItemsWithTag(int $page, $tag, ?int $userId): PaginationInterface
+    {
+        $builder = $this->latestQuery()
+            ->join('r.tags', 'tmp')
+            ->where('tmp.name = :tag')
+            ->setParameter('tag', $tag);
 
         if ($userId) {
             $builder = $builder->andWhere('r.user = :user')
@@ -59,6 +85,14 @@ class ItemRepository extends ServiceEntityRepository
             20,
             ['distinct' => false, 'sortFieldAllowlist' => ['r.id', 'r.name']]
         );
+    }
+
+    private function latestQuery()
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.UserCollection', 'c')
+            ->leftJoin('r.tags', 't')
+            ->select('r', 'c', 't');
     }
 
     //    /**

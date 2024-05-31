@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Item;
+use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\UserCollection;
 use App\Repository\UserCollectionRepository;
@@ -32,16 +33,6 @@ class ItemType extends AbstractType
             ->add('content', TextareaType::class, [
                 'label' => 'Content',
             ])
-            /*->add('created_at', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updated_at', null, [
-                'widget' => 'single_text',
-            ])*/
-            /*->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-            ])*/
             ->add('UserCollection', EntityType::class, [
                 'label' => 'Collection',
                 'class' => UserCollection::class,
@@ -51,6 +42,10 @@ class ItemType extends AbstractType
                         ->where('uc.user = :user')
                         ->setParameter(':user', $options['data']->getUser() ?? $this->security->getUser());
                 }
+            ])
+            ->add('tags', TagType::class, [
+                'label' => 'Tags',
+                'data_class' => null
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Save',

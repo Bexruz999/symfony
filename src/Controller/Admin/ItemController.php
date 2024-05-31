@@ -28,10 +28,19 @@ class ItemController extends AbstractController
     #[IsGranted(ItemVoter::LIST)]
     public function index(Request $request, ItemRepository $repository, Security $security): Response
     {
+
         $page = $request->query->getInt('page', 1);
         $userId = $security->getUser()->getId();
         $cantListAll = $security->isGranted(UserCollectionVoter::LIST_ALL);
-        $items = $repository->paginateItems($page,$cantListAll ? null : $userId);
+
+        if ($tag = $request->query->get('tags')) {
+
+            $items = $repository->paginateItemsWithTag($page, $tag,$cantListAll ? null : $userId);
+
+        } else {
+            $items = $repository->paginateItems($page,$cantListAll ? null : $userId);
+        }
+
         return $this->render('item/index.html.twig', [
             'items' => $items,
         ]);
@@ -52,12 +61,14 @@ class ItemController extends AbstractController
     {
         $form = $this->createForm(ItemType::class, $item);
         $form->handleRequest($request);
-
+        $collection = $item->getUserCollection();
         if ($form->isSubmitted()) {
 
+            $entityManager->persist($item);
             $entityManager->flush();
             $this->addFlash('success', 'Item updated.');
-            return $this->redirectToRoute('admin.item.index');
+            return $this->redirectToRoute('admin.collection.show', ['id' => $collection->getId(), 'slug' => $collection->getSlug()]);
+
         }
 
         return $this->render('item/edit.html.twig', [

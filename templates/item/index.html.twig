@@ -15,6 +15,7 @@
             <th>{{ knp_pagination_sortable(items, 'ID', 'c.id') }}</th>
             <th>{{ knp_pagination_sortable(items, 'Name', 'c.name') }}</th>
             <th>Category</th>
+            <th>Tags</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -29,6 +30,12 @@
                 </td>
                 <td>
                     <p>{{ item.usercollection.name | default('') }}</p>
+                </td>
+                <td>
+
+                    {% for tag in item.tags %}
+                        <a href="{{ path('admin.item.index') }}?tags={{ tag }}">{{ tag }}</a>
+                    {% endfor %}
                 </td>
                 <td>
                     <div class="d-flex gap-1">

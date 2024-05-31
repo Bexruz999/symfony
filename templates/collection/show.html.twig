@@ -39,7 +39,7 @@
         </tbody>
 
     </table>
-    <input type="text" name="tags" value="pfTag1,pfTag2,pfTag3" data-role="tagsinput" />
+
     {{ knp_pagination_render(items) }}
 
     <a class="btn btn-success" href="{{ path('admin.item.add', {id: collection.id})}}">{{ 'New' | trans }}</a>
