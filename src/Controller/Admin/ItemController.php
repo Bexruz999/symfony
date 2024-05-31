@@ -51,9 +51,7 @@ class ItemController extends AbstractController
     {
         $item = $repository->find($id);
 
-        return $this->render('item/show.html.twig', [
-            'item' => $item,
-        ]);
+        return $this->render('item/show.html.twig', ['item' => $item,]);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
