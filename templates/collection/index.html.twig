@@ -15,7 +15,6 @@
             <th>{{ knp_pagination_sortable(collections, 'ID', 'c.id') }}</th>
             <th>{{ knp_pagination_sortable(collections, 'Name', 'c.name') }}</th>
             <th>Category</th>
-            <th>Count</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -30,9 +29,6 @@
                 </td>
                 <td>
                     <p>{{ collection.category.name | default('') }}</p>
-                </td>
-                <td>
-                    <p>{{ items.0.count | default(0) }}</p>
                 </td>
                 <td>
                     <div class="d-flex gap-1">

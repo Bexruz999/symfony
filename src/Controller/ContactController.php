@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ContactController extends AbstractController
 {
     #[Route('/contact', name: 'contact')]
-    public function contact(Request $request, MailerInterface $mailer, EventDispatcherInterface $dispatcher): Response
+    public function contact(Request $request, EventDispatcherInterface $dispatcher): Response
     {
 
         $data = new ContactDTO();
@@ -39,5 +39,10 @@ class ContactController extends AbstractController
             'controller_name' => 'ContactController',
             'form' => $form,
         ]);
+    }
+
+    public function sendTicket(Request $request, MailerInterface $mailer, EventDispatcherInterface $dispatcher): Response
+    {
+
     }
 }

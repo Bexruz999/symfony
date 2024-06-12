@@ -66,6 +66,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Item::class, orphanRemoval: true)]
     private Collection $items;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $agreedOnTermsAndConditions = null;
+
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
@@ -290,6 +293,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $item->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAgreedOnTermsAndConditions(): ?bool
+    {
+        return $this->agreedOnTermsAndConditions;
+    }
+
+    public function setAgreedOnTermsAndConditions(?bool $agreedOnTermsAndConditions): static
+    {
+        $this->agreedOnTermsAndConditions = $agreedOnTermsAndConditions;
 
         return $this;
     }
